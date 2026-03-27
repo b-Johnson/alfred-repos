@@ -22,7 +22,6 @@ import os
 import pickle
 import signal
 import subprocess
-import sys
 
 from workflow import Workflow
 
@@ -119,57 +118,33 @@ def is_running(name):
     return False
 
 
-def _background(pidfile, stdin='/dev/null', stdout='/dev/null',
-                stderr='/dev/null'):  # pragma: no cover
-    """Fork the current process into a background daemon.
+def _start_background(pidfile, args, **kwargs):  # pragma: no cover
+    """Start a detached background process and write its PID to ``pidfile``.
 
-    :param pidfile: file to write PID of daemon process to.
+    Uses ``start_new_session=True`` instead of the double-fork pattern to
+    avoid the ``os.fork()`` deprecation warning introduced in Python 3.12.
+
+    :param pidfile: file to write PID of the detached process to.
     :type pidfile: filepath
-    :param stdin: where to read input
-    :type stdin: filepath
-    :param stdout: where to write stdout output
-    :type stdout: filepath
-    :param stderr: where to write stderr output
-    :type stderr: filepath
+    :param args: command and arguments passed to :func:`subprocess.Popen`
+    :param kwargs: keyword arguments passed to :func:`subprocess.Popen`
 
     """
-    def _fork_and_exit_parent(errmsg, wait=False, write=False):
-        try:
-            pid = os.fork()
-            if pid > 0:
-                if write:  # write PID of child process to `pidfile`
-                    tmp = pidfile + '.tmp'
-                    with open(tmp, 'w') as fp:
-                        fp.write(str(pid))
-                    os.rename(tmp, pidfile)
-                if wait:  # wait for child process to exit
-                    os.waitpid(pid, 0)
-                os._exit(0)
-        except OSError as err:
-            _log().critical('%s: (%d) %s', errmsg, err.errno, err.strerror)
-            raise err
+    popen_kwargs = {k: v for k, v in kwargs.items() if k != 'timeout'}
+    with open(os.devnull, 'rb') as devnull:
+        proc = subprocess.Popen(
+            args,
+            stdin=devnull,
+            stdout=devnull,
+            stderr=devnull,
+            start_new_session=True,
+            **popen_kwargs,
+        )
 
-    # Do first fork and wait for second fork to finish.
-    _fork_and_exit_parent('fork #1 failed', wait=True)
-
-    # Decouple from parent environment.
-    os.chdir(wf().workflowdir)
-    os.setsid()
-
-    # Do second fork and write PID to pidfile.
-    _fork_and_exit_parent('fork #2 failed', write=True)
-
-    # Now I am a daemon!
-    # Redirect standard file descriptors.
-    si = open(stdin, 'rb', 0)
-    so = open(stdout, 'ab+', 0)
-    se = open(stderr, 'ab+', 0)
-    if hasattr(sys.stdin, 'fileno'):
-        os.dup2(si.fileno(), sys.stdin.fileno())
-    if hasattr(sys.stdout, 'fileno'):
-        os.dup2(so.fileno(), sys.stdout.fileno())
-    if hasattr(sys.stderr, 'fileno'):
-        os.dup2(se.fileno(), sys.stderr.fileno())
+    tmp = pidfile + '.tmp'
+    with open(tmp, 'w') as fp:
+        fp.write(str(proc.pid))
+    os.rename(tmp, pidfile)
 
 
 def kill(name, sig=signal.SIGTERM):
@@ -244,8 +219,7 @@ def run_in_background(name, args, **kwargs):
 def main(wf):  # pragma: no cover
     """Run command in a background process.
 
-    Load cached arguments, fork into background, then call
-    :meth:`subprocess.call` with cached arguments.
+    Load cached arguments, launch as a detached subprocess, then return.
 
     """
     log = wf.logger
@@ -256,33 +230,20 @@ def main(wf):  # pragma: no cover
         log.critical(msg)
         raise IOError(msg)
 
-    # Fork to background and run command
-    pidfile = _pid_file(name)
-    _background(pidfile)
-
     # Load cached arguments
     with open(argcache, 'rb') as fp:
         data = pickle.load(fp)
 
-    # Cached arguments
     args = data['args']
     kwargs = data['kwargs']
 
     # Delete argument cache file
     os.unlink(argcache)
 
-    try:
-        # Run the command
-        log.debug('[%s] running command: %r', name, args)
-
-        retcode = subprocess.call(args, **kwargs)
-
-        if retcode:
-            log.error('[%s] command failed with status %d', name, retcode)
-    finally:
-        os.unlink(pidfile)
-
-    log.debug('[%s] job complete', name)
+    pidfile = _pid_file(name)
+    log.debug('[%s] running command: %r', name, args)
+    _start_background(pidfile, args, **kwargs)
+    log.debug('[%s] background job started', name)
 
 
 if __name__ == '__main__':  # pragma: no cover
