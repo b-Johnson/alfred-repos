@@ -86,13 +86,13 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Thomas Harr</string>
+	<string>Brian Johnson</string>
 	<key>description</key>
 	<string>Find and browse Git repositories</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Repos</string>
+	<string>Git Repos Next</string>
 	<key>objects</key>
 	<array>
 		<dict>
