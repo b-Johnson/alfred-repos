@@ -1,0 +1,124 @@
+name: Release Alfred Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    # Skip runs triggered by the automated version-bump commit
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Read current version from info.plist
+        id: current_version
+        run: |
+          VERSION=$(python3 -c "
+          import plistlib
+          with open('src/info.plist', 'rb') as f:
+              plist = plistlib.load(f)
+          print(plist.get('version', '1.0.0'))
+          ")
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Determine bump type from commit messages since last tag
+        id: bump
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"%s" HEAD)
+          else
+            COMMITS=$(git log --pretty=format:"%s" "${LAST_TAG}..HEAD")
+          fi
+
+          BUMP="patch"
+          while IFS= read -r msg; do
+            if echo "$msg" | grep -qiE "BREAKING[[:space:]]CHANGE|^[a-z]+(\(.+\))?!:"; then
+              BUMP="major"
+              break
+            elif echo "$msg" | grep -qiE "^feat(\(.+\))?:"; then
+              BUMP="minor"
+            fi
+          done <<< "$COMMITS"
+
+          echo "type=$BUMP" >> "$GITHUB_OUTPUT"
+
+      - name: Compute next version
+        id: next_version
+        run: |
+          CURRENT="${{ steps.current_version.outputs.value }}"
+          BUMP="${{ steps.bump.outputs.type }}"
+
+          # Normalize to major.minor.patch
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${CURRENT}.0.0"
+          MAJOR=${MAJOR:-0}
+          MINOR=${MINOR:-0}
+          PATCH=${PATCH:-0}
+
+          case "$BUMP" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+
+          NEXT="${MAJOR}.${MINOR}.${PATCH}"
+          echo "value=$NEXT" >> "$GITHUB_OUTPUT"
+          echo "Bumping $CURRENT → $NEXT ($BUMP)"
+
+      - name: Update version in info.plist
+        run: |
+          NEXT="${{ steps.next_version.outputs.value }}"
+          python3 - <<EOF
+          import plistlib
+
+          with open('src/info.plist', 'rb') as f:
+              plist = plistlib.load(f)
+
+          plist['version'] = '$NEXT'
+
+          with open('src/info.plist', 'wb') as f:
+              plistlib.dump(plist, f)
+          EOF
+
+      - name: Update version in workflow/version
+        run: echo "${{ steps.next_version.outputs.value }}" > src/workflow/version
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/info.plist src/workflow/version
+          git commit -m "chore: bump version to ${{ steps.next_version.outputs.value }} [skip ci]"
+          git push
+
+      - name: Package Alfred workflow
+        run: |
+          VERSION="${{ steps.next_version.outputs.value }}"
+          cd src
+          zip -r "../Repos-${VERSION}.alfredworkflow" . \
+            -x "__pycache__/*" \
+            -x "**/__pycache__/*" \
+            -x "*.pyc"
+          echo "ARTIFACT=Repos-${VERSION}.alfredworkflow" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release and upload artifact
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v${{ steps.next_version.outputs.value }}"
+          gh release create "$TAG" \
+            --title "Repos $TAG" \
+            --generate-notes \
+            "${{ env.ARTIFACT }}"

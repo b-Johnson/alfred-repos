@@ -1,5 +1,7 @@
 # Repos Alfred Workflow
 
+> **Note:** This repository is forked from [harrtho/alfred-repos](https://github.com/harrtho/alfred-repos).
+
 [![GitHub Version][shield-version]][gh-releases]
 [![GitHub All Releases][shield-downloads]][gh-releases]
 [![GitHub][shield-license]][license-mit]
@@ -197,19 +199,19 @@ The workflow uses the following icons:
 
 [abandoned-workflow]: https://github.com/deanishe/alfred-repos
 [alfred-config-sheet]: https://www.alfredapp.com/help/workflows/advanced/variables/#environment
-[alfred-pyworkflow]: https://github.com/harrtho/alfred-pyworkflow
+[alfred-pyworkflow]: https://github.com/b-Johnson/alfred-pyworkflow
 [alfred]: https://www.alfredapp.com
 [deanishe]: https://github.com/deanishe
 [docopt]: https://github.com/docopt/docopt
-[gh-issues]: https://github.com/harrtho/alfred-repos/issues
-[gh-latest-release]: https://github.com/harrtho/alfred-repos/releases/latest
-[gh-releases]: https://github.com/harrtho/alfred-repos/releases
+[gh-issues]: https://github.com/b-Johnson/alfred-repos/issues
+[gh-latest-release]: https://github.com/b-Johnson/alfred-repos/releases/latest
+[gh-releases]: https://github.com/b-Johnson/alfred-repos/releases
 [git]: https://git-scm.com/downloads/logos
 [jlong]: https://twitter.com/jasonlong
 [license-cc]: https://creativecommons.org/licenses/by/3.0/
 [license-docopt]: https://github.com/docopt/docopt/blob/master/LICENSE-MIT
 [license-mit]: https://opensource.org/licenses/MIT
 [preview]: img/preview.png
-[shield-downloads]: https://img.shields.io/github/downloads/harrtho/alfred-repos/total.svg
-[shield-license]: https://img.shields.io/github/license/harrtho/alfred-repos.svg
-[shield-version]: https://img.shields.io/github/release/harrtho/alfred-repos.svg
+[shield-downloads]: https://img.shields.io/github/downloads/b-Johnson/alfred-repos/total.svg
+[shield-license]: https://img.shields.io/github/license/b-Johnson/alfred-repos.svg
+[shield-version]: https://img.shields.io/github/release/b-Johnson/alfred-repos.svg
