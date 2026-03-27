@@ -41,10 +41,10 @@ from workflow.notify import notify
 DEFAULT_UPDATE_INTERVAL = 180  # minutes
 
 # GitHub repo for self-updating
-UPDATE_SETTINGS = {'github_slug': 'harrtho/alfred-repos'}
+UPDATE_SETTINGS = {'github_slug': 'b-Johnson/alfred-repos'}
 
 # GitHub Issues
-HELP_URL = 'https://github.com/harrtho/alfred-repos/issues'
+HELP_URL = 'https://github.com/b-Johnson/alfred-repos/issues'
 
 # Icon shown if a newer version is available
 ICON_UPDATE = 'update-available.png'
@@ -60,6 +60,19 @@ BROWSERS = [
     'Firefox',
     'Safari',
     'WebKit',
+    'Brave Browser',
+    'Microsoft Edge',
+    'Opera',
+    'Chromium',
+    'Arc',
+    'Vivaldi',
+    'Waterfox',
+    'Orion',
+    'Firefox Developer Edition',
+    'Firefox Focus',
+    'Firefox Preview',
+    'Firefox Quantum',
+    'Firefox Nightly',
 ]
 
 DEFAULT_SEARCH_PATH = '~/delete/this/example'
