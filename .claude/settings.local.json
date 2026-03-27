@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(grep:*)",
-      "Bash(wc -l /Users/brianjohnson/Documents/dev.Beta/alfred-repos/src/*.py /Users/brianjohnson/Documents/dev.Beta/alfred-repos/src/workflow/*.py)",
-      "Bash(python3:*)"
-    ]
-  }
-}
