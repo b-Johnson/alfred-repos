@@ -374,82 +374,82 @@ Use the `reposhelp` command to see the help file.</string>
 			<key>note</key>
 			<string>Open help file in your browser</string>
 			<key>xpos</key>
-			<real>40</real>
+			<real>40.0</real>
 			<key>ypos</key>
-			<real>370</real>
+			<real>370.0</real>
 		</dict>
 		<key>227B191C-26EA-4302-B5A1-79CBA4BF107A</key>
 		<dict>
 			<key>note</key>
 			<string>Force update of repo list</string>
 			<key>xpos</key>
-			<real>40</real>
+			<real>40.0</real>
 			<key>ypos</key>
-			<real>540</real>
+			<real>540.0</real>
 		</dict>
 		<key>25B07D69-2EF2-420F-8B3B-0E7E7CA7B34F</key>
 		<dict>
 			<key>note</key>
 			<string>Open repo in specified app</string>
 			<key>xpos</key>
-			<real>300</real>
+			<real>300.0</real>
 			<key>ypos</key>
-			<real>30</real>
+			<real>30.0</real>
 		</dict>
 		<key>25BDF5B8-CC9C-444A-B35A-CD0ED5D35A84</key>
 		<dict>
 			<key>note</key>
 			<string>Open settings in your default editor</string>
 			<key>xpos</key>
-			<real>40</real>
+			<real>40.0</real>
 			<key>ypos</key>
-			<real>200</real>
+			<real>200.0</real>
 		</dict>
 		<key>47FD6543-A4A6-4714-B190-9DF8B5B28444</key>
 		<dict>
 			<key>xpos</key>
-			<real>300</real>
+			<real>300.0</real>
 			<key>ypos</key>
-			<real>540</real>
+			<real>540.0</real>
 		</dict>
 		<key>71820CCE-FF52-4077-B790-ACA80D174C54</key>
 		<dict>
 			<key>note</key>
 			<string>View/filter git repos</string>
 			<key>xpos</key>
-			<real>40</real>
+			<real>40.0</real>
 			<key>ypos</key>
-			<real>30</real>
+			<real>30.0</real>
 		</dict>
 		<key>CB04399E-A00E-40F1-8753-994DF261B93C</key>
 		<dict>
 			<key>xpos</key>
-			<real>210</real>
+			<real>210.0</real>
 			<key>ypos</key>
-			<real>60</real>
+			<real>60.0</real>
 		</dict>
 		<key>D2D75AF8-15E1-40D8-84D1-AE23BA5263F4</key>
 		<dict>
 			<key>note</key>
 			<string>Show error message</string>
 			<key>xpos</key>
-			<real>480</real>
+			<real>480.0</real>
 			<key>ypos</key>
-			<real>30</real>
+			<real>30.0</real>
 		</dict>
 		<key>E36B8788-0F7C-494A-A3D5-3347CA273F85</key>
 		<dict>
 			<key>xpos</key>
-			<real>300</real>
+			<real>300.0</real>
 			<key>ypos</key>
-			<real>200</real>
+			<real>200.0</real>
 		</dict>
 		<key>FC60057D-548A-4394-9426-1764C21DC6F0</key>
 		<dict>
 			<key>xpos</key>
-			<real>300</real>
+			<real>300.0</real>
 			<key>ypos</key>
-			<real>370</real>
+			<real>370.0</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
@@ -460,7 +460,7 @@ Use the `reposhelp` command to see the help file.</string>
 		<string>180</string>
 	</dict>
 	<key>version</key>
-	<string>4.3.0</string>
+	<string>5.0.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/b-Johnson/alfred-repos</string>
 </dict>
